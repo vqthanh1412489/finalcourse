@@ -8,10 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const assert = require("assert");
 const request = require("supertest");
 const app_1 = require("../../../src/app");
 const Admin_1 = require("../../../src/models/Admin");
-describe.only('Admin signup Router', () => {
+describe('Admin signup Router', () => {
     it('KT can signup new Admin incase full infor', () => __awaiter(this, void 0, void 0, function* () {
         const body = {
             username: 'vqthanh1',
@@ -25,6 +26,7 @@ describe.only('Admin signup Router', () => {
         const res = yield request(app_1.app).post('/admin/signup')
             .send(body);
         const admin = yield Admin_1.Admin.findOne({ username: 'vqthanh1' });
-        console.log(admin);
+        assert.equal(res.body.success, true);
+        assert.equal(res.status, 200);
     }));
 });

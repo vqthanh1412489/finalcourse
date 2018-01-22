@@ -1,12 +1,15 @@
 import mongoose = require('mongoose');
 import { connect } from 'mongoose';
 mongoose.Promise = global.Promise;
-let url;
 
-if (process.env.NODE_ENV === 'test')  url = 'mongodb://localhost/ttta-test';
-else if (process.env.NODE_ENV === 'production')  url = 'mongodb://....';
-else url = 'mongodb://localhost/ttta';
+function getDB() {
+    if (process.env.NODE_ENV === 'test') return 'mongodb://localhost/ttta-test';
+    if (process.env.NODE_ENV === 'production') return 'mongodb://....';
+    return 'mongodb://localhost/ttta';
+}
 
-connect(url)
-    // .then(() => console.log('Connected'))
+connect(getDB())
+    .then(() => {
+        console.log('Connected');
+    })
     .catch(err => console.log(err));

@@ -1,6 +1,7 @@
 import { compare, hash } from 'bcrypt';
 import { createToken, verifyToken } from '../libs/jwt';
 import { Admin } from './Admin';
+
 export class AdminService {
     static async signUpAdmin(
         username: string,

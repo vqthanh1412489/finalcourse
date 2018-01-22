@@ -21,8 +21,8 @@ adminRouter.post('/signin', (req, res) => {
 });
 
 adminRouter.post('/checkAdmin', (req, res) => {
-    const { username, password } = req.body;
-    AdminService.signInAdmin(username, password)
+    const { token } = req.headers;
+    AdminService.checkUser(token as string)
     .then(data => res.send({ success: true, data }))
     .catch(err => res.status(404).send({ success: false, message: 'Token invalid' }));
 });

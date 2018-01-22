@@ -7,7 +7,7 @@
   "scripts": {
     "server": "nodemon dist/src/index.js",
     "start": "node dist/src/index.js",
-    "test": "set \"NODE_ENV=test\" && nodemon --exec mocha dist/test --recursive -R min --timeout 10000"
+    "test": "set \"NODE_ENV=test\" && nodemon --exec mocha dist/test --recursive -R min --timeout 15000"
   },
   "devDependencies": {
     "@types/bcrypt": "^1.0.0",

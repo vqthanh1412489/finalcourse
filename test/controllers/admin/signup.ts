@@ -3,7 +3,7 @@ import * as request from 'supertest';
 import { app } from '../../../src/app';
 import { Admin } from '../../../src/models/Admin';
 
-describe.only('Admin signup Router', () => {
+describe('Admin signup Router', () => {
     it('KT can signup new Admin incase full infor', async () => {
         const body = {
             username: 'vqthanh1',
@@ -18,6 +18,7 @@ describe.only('Admin signup Router', () => {
         .send(body);
 
         const admin = await Admin.findOne({ username: 'vqthanh1' }) as Admin;
-        console.log(admin);
+        assert.equal(res.body.success, true);
+        assert.equal(res.status, 200);
     });
 });

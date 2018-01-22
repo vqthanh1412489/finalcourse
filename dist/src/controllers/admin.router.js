@@ -18,8 +18,8 @@ exports.adminRouter.post('/signin', (req, res) => {
         .catch(err => res.status(404).send({ success: false, message: 'Username of Password invalid' }));
 });
 exports.adminRouter.post('/checkAdmin', (req, res) => {
-    const { username, password } = req.body;
-    admin_service_1.AdminService.signInAdmin(username, password)
+    const { token } = req.headers;
+    admin_service_1.AdminService.checkUser(token)
         .then(data => res.send({ success: true, data }))
         .catch(err => res.status(404).send({ success: false, message: 'Token invalid' }));
 });
