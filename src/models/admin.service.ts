@@ -40,7 +40,7 @@ export class AdminService {
         if (admin.authority !== 0) throw new Error('You are not Admin');
         const adminInfor = admin.toObject() as Admin;
         delete adminInfor.password;
-        const newToken = await createToken({ _id: admin._id, name: admin.name });
+        const newToken = await createToken({ _id: admin._id, authority: admin.authority });
         return { admin: adminInfor, token: newToken };
     }
 }

@@ -49,7 +49,7 @@ class AdminService {
                 throw new Error('You are not Admin');
             const adminInfor = admin.toObject();
             delete adminInfor.password;
-            const newToken = yield jwt_1.createToken({ _id: admin._id, name: admin.name });
+            const newToken = yield jwt_1.createToken({ _id: admin._id, authority: admin.authority });
             return { admin: adminInfor, token: newToken };
         });
     }
