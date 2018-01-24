@@ -4,7 +4,7 @@ import { app } from '../../../src/app';
 import { Teacher } from '../../../src/models/Teacher';
 import { TeacherService } from '../../../src/models/teacher.service';
 
-describe.only('teacher checkUser Router', () => {
+describe('teacher checkUser Router', () => {
     let tk: any;
     beforeEach('Add new teacher', async () => {
         await TeacherService.signUpTeacher('tea1', '123', 'teacher1', 'tea@gmailcon', '123', 'En', 'GL', 'Agri', '1234',

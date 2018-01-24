@@ -53,5 +53,30 @@ class AdminService {
             return { admin: adminInfor, token: newToken };
         });
     }
+    static deleteAdmin(idAdmin) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const adminRemoved = yield Admin_1.Admin.findByIdAndRemove(idAdmin);
+            const adminInfor = adminRemoved.toObject();
+            delete adminInfor.password;
+            return adminInfor;
+        });
+    }
+    static updatePasswordAdmin(idAdmin, newPassword) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const encrypted = yield bcrypt_1.hash(newPassword, 8);
+            const newAdmin = yield Admin_1.Admin.findByIdAndUpdate(idAdmin, { password: encrypted }, { new: true });
+            const adminInfor = newAdmin.toObject();
+            delete adminInfor.password;
+            return adminInfor;
+        });
+    }
+    static updateNameAdmin(idAdmin, newName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newAdmin = yield Admin_1.Admin.findByIdAndUpdate(idAdmin, { name: newName }, { new: true });
+            const adminInfor = newAdmin.toObject();
+            delete adminInfor.password;
+            return adminInfor;
+        });
+    }
 }
 exports.AdminService = AdminService;

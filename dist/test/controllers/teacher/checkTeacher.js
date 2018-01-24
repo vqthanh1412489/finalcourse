@@ -12,7 +12,7 @@ const assert = require("assert");
 const request = require("supertest");
 const app_1 = require("../../../src/app");
 const teacher_service_1 = require("../../../src/models/teacher.service");
-describe.only('teacher checkUser Router', () => {
+describe('teacher checkUser Router', () => {
     let tk;
     beforeEach('Add new teacher', () => __awaiter(this, void 0, void 0, function* () {
         yield teacher_service_1.TeacherService.signUpTeacher('tea1', '123', 'teacher1', 'tea@gmailcon', '123', 'En', 'GL', 'Agri', '1234', ['Toiec', 'Tofel'], '123');

@@ -43,4 +43,25 @@ export class AdminService {
         const newToken = await createToken({ _id: admin._id, authority: admin.authority });
         return { admin: adminInfor, token: newToken };
     }
+
+    static async deleteAdmin(idAdmin: string) {
+        const adminRemoved = await Admin.findByIdAndRemove(idAdmin) as Admin;
+        const adminInfor = adminRemoved.toObject() as Admin;
+        delete adminInfor.password;
+        return adminInfor;
+    }
+
+    static async updatePasswordAdmin(idAdmin: string, newPassword: string) {
+        const encrypted = await hash(newPassword, 8);
+        const newAdmin =  await Admin.findByIdAndUpdate(idAdmin, { password: encrypted }, { new: true }) as Admin;
+        const adminInfor = newAdmin.toObject() as Admin;
+        delete adminInfor.password;
+        return adminInfor;
+    }
+    static async updateNameAdmin(idAdmin: string, newName: string) {
+        const newAdmin =  await Admin.findByIdAndUpdate(idAdmin, { name: newName }, { new: true }) as Admin;
+        const adminInfor = newAdmin.toObject() as Admin;
+        delete adminInfor.password;
+        return adminInfor;
+    }
 }
