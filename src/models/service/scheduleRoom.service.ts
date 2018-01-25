@@ -6,7 +6,7 @@ export class ScheduleRoomService {
         dayOfWeek: number,
         startTime: Date,
         endTime: Date,
-        idRoom: Room
+        idRoom: string
     ) {
         const room = await Room.findById(idRoom);
         if (!room) throw new Error('Room not found');
@@ -21,16 +21,16 @@ export class ScheduleRoomService {
 
     static async updateScheduleRoom(
         idScheduleRoom: string,
-        newDayOfWeek: Date,
+        newDayOfWeek: number,
         newStartTime: Date,
         newEndTime: Date,
-        newIdRoom: Date) {
+        newIdRoom: string) {
         return await ScheduleRoom.findByIdAndUpdate(idScheduleRoom,
             {
-                newDayOfWeek,
-                newStartTime,
-                newEndTime,
-                newIdRoom
+                dayOfWeek: newDayOfWeek,
+                startTime: newStartTime,
+                endTime: newEndTime,
+                idRoom: newIdRoom
             }, { new: true }) as ScheduleRoom;
     }
 }

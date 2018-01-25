@@ -19,7 +19,7 @@ describe('admin/changePassword Router', () => {
         .set({ token: tk });
         assert.equal(res.status, 200);
     });
-    it('KT cannot change Password Admin incase wrong token', async () => {
+    xit('KT cannot change Password Admin incase wrong token', async () => {
         const res = await request(app).put(`/admin/changePassword`)
         .send({ newPassword: 'Yennhi123' })
         .set({ token: 'asdfsafaskhayasf.afskfaf' });

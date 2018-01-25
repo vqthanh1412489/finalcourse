@@ -24,6 +24,9 @@ class RoomService {
             if (scheduleRoom)
                 throw new Error('Room is removing dependence the Schedule Room');
             const roomRemoved = yield Room_1.Room.findByIdAndRemove(idRoom);
+            if (!roomRemoved)
+                throw new Error('idRoom not found');
+            return roomRemoved;
         });
     }
     static updateRoom(idRoom, newName, newNumberSeat) {
@@ -31,7 +34,10 @@ class RoomService {
             const scheduleRoom = yield ScheduleRoom_1.ScheduleRoom.findOne({ idRoom });
             if (scheduleRoom)
                 throw new Error('Room is updating dependence the Schedule Room');
-            return yield Room_1.Room.findByIdAndUpdate(idRoom, { name: newName, numberSeat: newNumberSeat }, { new: true });
+            const room = yield Room_1.Room.findByIdAndUpdate(idRoom, { name: newName, numberSeat: newNumberSeat }, { new: true });
+            if (!room)
+                throw new Error('idRoom not found');
+            return room;
         });
     }
 }

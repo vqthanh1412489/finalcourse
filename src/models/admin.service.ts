@@ -25,6 +25,7 @@ export class AdminService {
     static async signInAdmin(username: string, password: string) {
         const admin = await Admin.findOne({ username }) as Admin;
         if (!admin) throw new Error('User not exists');
+        if (admin.authority !== 0) throw new Error('You are not a Admin');
         const same = await compare(password, admin.password);
         if (!same) throw new Error('Password invalid');
         const adminInfor = admin.toObject() as Admin;
@@ -46,6 +47,7 @@ export class AdminService {
 
     static async deleteAdmin(idAdmin: string) {
         const adminRemoved = await Admin.findByIdAndRemove(idAdmin) as Admin;
+        if (!adminRemoved) throw new Error('idAdmin not found');
         const adminInfor = adminRemoved.toObject() as Admin;
         delete adminInfor.password;
         return adminInfor;
@@ -54,12 +56,14 @@ export class AdminService {
     static async updatePasswordAdmin(idAdmin: string, newPassword: string) {
         const encrypted = await hash(newPassword, 8);
         const newAdmin =  await Admin.findByIdAndUpdate(idAdmin, { password: encrypted }, { new: true }) as Admin;
+        if (!newAdmin) throw new Error('idAdmin not found');
         const adminInfor = newAdmin.toObject() as Admin;
         delete adminInfor.password;
         return adminInfor;
     }
     static async updateNameAdmin(idAdmin: string, newName: string) {
         const newAdmin =  await Admin.findByIdAndUpdate(idAdmin, { name: newName }, { new: true }) as Admin;
+        if (!newAdmin) throw new Error('idAdmin not found');
         const adminInfor = newAdmin.toObject() as Admin;
         delete adminInfor.password;
         return adminInfor;

@@ -29,10 +29,10 @@ class ScheduleRoomService {
     static updateScheduleRoom(idScheduleRoom, newDayOfWeek, newStartTime, newEndTime, newIdRoom) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield ScheduleRoom_1.ScheduleRoom.findByIdAndUpdate(idScheduleRoom, {
-                newDayOfWeek,
-                newStartTime,
-                newEndTime,
-                newIdRoom
+                dayOfWeek: newDayOfWeek,
+                startTime: newStartTime,
+                endTime: newEndTime,
+                idRoom: newIdRoom
             }, { new: true });
         });
     }

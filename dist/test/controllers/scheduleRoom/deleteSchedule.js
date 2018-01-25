@@ -8,12 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const assert = require("assert");
-const request = require("supertest");
-const app_1 = require("../../../src/app");
 const admin_service_1 = require("../../../src/models/admin.service");
 const Room_1 = require("../../../src/models/Room");
 const room_service_1 = require("../../../src/models/service/room.service");
+const scheduleRoom_service_1 = require("../../../src/models/service/scheduleRoom.service");
 describe('add scheduleRoom Router', () => {
     let tk;
     let idRoom;
@@ -25,8 +23,6 @@ describe('add scheduleRoom Router', () => {
         yield room_service_1.RoomService.addRoom('E102', 500);
         const room = yield Room_1.Room.findOne({ name: 'E102' });
         idRoom = room._id;
-    }));
-    it('KT can add new a ScheduleRoom incase full infor && you are Admin', () => __awaiter(this, void 0, void 0, function* () {
         let startTime;
         startTime = new Date();
         let endTime;
@@ -35,37 +31,6 @@ describe('add scheduleRoom Router', () => {
         startTime.setUTCMinutes(0);
         endTime.setUTCHours(20);
         endTime.setUTCMinutes(30);
-        const response = yield request(app_1.app).post('/scheduleRoom/')
-            .send({ dayOfWeek: 2, startTime, endTime, idRoom })
-            .set({ token: tk });
-        assert.equal(response.status, 200);
-    }));
-    xit('KT cannot add new a scheduleRoom incase you arenot Admin', () => __awaiter(this, void 0, void 0, function* () {
-        let startTime;
-        startTime = new Date();
-        let endTime;
-        endTime = new Date();
-        startTime.setUTCHours(18);
-        startTime.setUTCMinutes(0);
-        endTime.setUTCHours(20);
-        endTime.setUTCMinutes(30);
-        const response = yield request(app_1.app).post('/scheduleRoom/')
-            .send({ dayOfWeek: 2, startTime, endTime, idRoom })
-            .set({ token: 'sdfsfsf.asfsff' });
-        assert.equal(response.status, 404);
-    }));
-    xit('KT cannot add new a scheduleRoom incase is Admin && invalid Room', () => __awaiter(this, void 0, void 0, function* () {
-        let startTime;
-        startTime = new Date();
-        let endTime;
-        endTime = new Date();
-        startTime.setUTCHours(18);
-        startTime.setUTCMinutes(0);
-        endTime.setUTCHours(20);
-        endTime.setUTCMinutes(30);
-        const response = yield request(app_1.app).post('/scheduleRoom/')
-            .send({ dayOfWeek: 2, startTime, endTime, idRoom: 'askdfhaskhfasfs' })
-            .set({ token: tk });
-        assert.equal(response.status, 404);
+        yield scheduleRoom_service_1.ScheduleRoomService.addScheduleRoom(4, startTime, endTime, idRoom);
     }));
 });

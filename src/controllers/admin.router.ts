@@ -19,7 +19,7 @@ adminRouter.post('/signin', (req, res) => {
     const { username, password } = req.body;
     AdminService.signInAdmin(username, password)
     .then(data => res.send({ success: true, data }))
-    .catch(err => res.status(404).send({ success: false, message: 'Username of Password invalid' }));
+    .catch(err => res.status(404).send({ success: false, message: 'Signin Fail' }));
 });
 
 adminRouter.post('/checkAdmin', (req, res) => {

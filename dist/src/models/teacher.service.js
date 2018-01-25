@@ -38,6 +38,8 @@ class TeacherService {
             const teacher = yield Teacher_1.Teacher.findOne({ username });
             if (!teacher)
                 throw new Error('User not exists');
+            if (teacher.authority !== 1)
+                throw new Error('You are not a Teacher');
             const same = yield bcrypt_1.compare(password, teacher.password);
             if (!same)
                 throw new Error('Password invalid');

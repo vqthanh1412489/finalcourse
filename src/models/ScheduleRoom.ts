@@ -1,6 +1,5 @@
 import mongoose = require('mongoose');
 import { model, Schema } from 'mongoose';
-import { Room } from './Room';
 
 const ScheduleRoomSchema = new Schema({
     dayOfWeek: { type: Number, required: true, trim: true, min: 2, max: 8 },
@@ -15,5 +14,5 @@ export class ScheduleRoom extends ScheduleRoomMongo {
     dayOfWeek: number;
     startTime: Date;
     endTime: Date;
-    idRoom: Room;
+    idRoom: string;
 }

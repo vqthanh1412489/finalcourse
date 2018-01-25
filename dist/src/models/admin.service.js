@@ -30,6 +30,8 @@ class AdminService {
             const admin = yield Admin_1.Admin.findOne({ username });
             if (!admin)
                 throw new Error('User not exists');
+            if (admin.authority !== 0)
+                throw new Error('You are not a Admin');
             const same = yield bcrypt_1.compare(password, admin.password);
             if (!same)
                 throw new Error('Password invalid');
@@ -56,6 +58,8 @@ class AdminService {
     static deleteAdmin(idAdmin) {
         return __awaiter(this, void 0, void 0, function* () {
             const adminRemoved = yield Admin_1.Admin.findByIdAndRemove(idAdmin);
+            if (!adminRemoved)
+                throw new Error('idAdmin not found');
             const adminInfor = adminRemoved.toObject();
             delete adminInfor.password;
             return adminInfor;
@@ -65,6 +69,8 @@ class AdminService {
         return __awaiter(this, void 0, void 0, function* () {
             const encrypted = yield bcrypt_1.hash(newPassword, 8);
             const newAdmin = yield Admin_1.Admin.findByIdAndUpdate(idAdmin, { password: encrypted }, { new: true });
+            if (!newAdmin)
+                throw new Error('idAdmin not found');
             const adminInfor = newAdmin.toObject();
             delete adminInfor.password;
             return adminInfor;
@@ -73,6 +79,8 @@ class AdminService {
     static updateNameAdmin(idAdmin, newName) {
         return __awaiter(this, void 0, void 0, function* () {
             const newAdmin = yield Admin_1.Admin.findByIdAndUpdate(idAdmin, { name: newName }, { new: true });
+            if (!newAdmin)
+                throw new Error('idAdmin not found');
             const adminInfor = newAdmin.toObject();
             delete adminInfor.password;
             return adminInfor;

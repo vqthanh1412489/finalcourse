@@ -6,7 +6,7 @@ import { Room } from '../../../src/models/Room';
 import { RoomService } from '../../../src/models/service/room.service';
 import { ScheduleRoomService } from '../../../src/models/service/scheduleRoom.service';
 
-describe.only('add scheduleRoom Router', () => {
+describe('add scheduleRoom Router', () => {
     let tk: any;
     let idRoom: any;
     beforeEach('Add new a Admin - Add new Room', async () => {
@@ -19,7 +19,7 @@ describe.only('add scheduleRoom Router', () => {
         const room = await Room.findOne({ name: 'E102' }) as Room;
         idRoom = room._id;
     });
-    xit('KT can add new a ScheduleRoom incase full infor && you are Admin', async () => {
+    it('KT can add new a ScheduleRoom incase full infor && you are Admin', async () => {
         let startTime;
         startTime = new Date();
         let endTime;
@@ -34,7 +34,7 @@ describe.only('add scheduleRoom Router', () => {
         .set({ token: tk });
         assert.equal(response.status, 200);
     });
-    it('KT cannot add new a scheduleRoom incase you arenot Admin', async () => {
+    xit('KT cannot add new a scheduleRoom incase you arenot Admin', async () => {
         let startTime;
         startTime = new Date();
         let endTime;
@@ -47,6 +47,22 @@ describe.only('add scheduleRoom Router', () => {
         const response = await request(app).post('/scheduleRoom/')
         .send({ dayOfWeek: 2, startTime, endTime, idRoom })
         .set({ token: 'sdfsfsf.asfsff' });
+        assert.equal(response.status, 404);
+    });
+
+    xit('KT cannot add new a scheduleRoom incase is Admin && invalid Room', async () => {
+        let startTime;
+        startTime = new Date();
+        let endTime;
+        endTime = new Date();
+
+        startTime.setUTCHours(18);
+        startTime.setUTCMinutes(0);
+        endTime.setUTCHours(20);
+        endTime.setUTCMinutes(30);
+        const response = await request(app).post('/scheduleRoom/')
+        .send({ dayOfWeek: 2, startTime, endTime, idRoom: 'askdfhaskhfasfs' })
+        .set({ token: tk });
         assert.equal(response.status, 404);
     });
 });

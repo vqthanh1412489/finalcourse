@@ -38,6 +38,7 @@ export class TeacherService {
     static async signInTeacher(username: string, password: string) {
         const teacher = await Teacher.findOne({ username }) as Teacher;
         if (!teacher) throw new Error('User not exists');
+        if (teacher.authority !== 1) throw new Error('You are not a Teacher');
         const same = await compare(password, teacher.password);
         if (!same) throw new Error('Password invalid');
         const teacherInfor = teacher.toObject() as Teacher;

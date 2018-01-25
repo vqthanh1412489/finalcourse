@@ -16,7 +16,7 @@ exports.adminRouter.post('/signin', (req, res) => {
     const { username, password } = req.body;
     admin_service_1.AdminService.signInAdmin(username, password)
         .then(data => res.send({ success: true, data }))
-        .catch(err => res.status(404).send({ success: false, message: 'Username of Password invalid' }));
+        .catch(err => res.status(404).send({ success: false, message: 'Signin Fail' }));
 });
 exports.adminRouter.post('/checkAdmin', (req, res) => {
     const { token } = req.headers;
