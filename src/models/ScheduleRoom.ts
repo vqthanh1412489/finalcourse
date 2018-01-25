@@ -11,6 +11,7 @@ const ScheduleRoomSchema = new Schema({
 const ScheduleRoomMongo = model('ScheduleRoom', ScheduleRoomSchema);
 
 export class ScheduleRoom extends ScheduleRoomMongo {
+    _id: string;
     dayOfWeek: number;
     startTime: Date;
     endTime: Date;

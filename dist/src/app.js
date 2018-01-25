@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cors = require("cors");
 const express = require("express");
 const admin_router_1 = require("./controllers/admin.router");
+const class_router_1 = require("./controllers/class.router");
+const course_router_1 = require("./controllers/course.router");
 const room_router_1 = require("./controllers/room.router");
 const scheduleRoom_router_1 = require("./controllers/scheduleRoom.router");
 const student_router_1 = require("./controllers/student.router");
@@ -14,6 +16,8 @@ exports.app.use('/teacher', teacher_router_1.teacherRouter);
 exports.app.use('/room', room_router_1.roomRouter);
 exports.app.use('/scheduleRoom', scheduleRoom_router_1.scheduleRoomRouter);
 exports.app.use('/student', student_router_1.studentRouter);
+exports.app.use('/course', course_router_1.courseRouter);
+exports.app.use('/class', class_router_1.classRouter);
 exports.app.get('/', (req, res) => {
     res.send('Vu Quoc Thanh');
 });

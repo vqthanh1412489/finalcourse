@@ -9,6 +9,7 @@ const RoomSchema = new Schema({
 const RoomMongo  = model('Room', RoomSchema);
 
 export class Room extends RoomMongo {
+    _id: string;
     name: string;
     numberSeat: number;
 }

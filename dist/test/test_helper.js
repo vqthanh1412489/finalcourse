@@ -9,6 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Admin_1 = require("../src/models/Admin");
+const Class_1 = require("../src/models/Class");
+const Course_1 = require("../src/models/Course");
 const Room_1 = require("../src/models/Room");
 const ScheduleRoom_1 = require("../src/models/ScheduleRoom");
 const Student_1 = require("../src/models/Student");
@@ -20,4 +22,6 @@ beforeEach('Remove all Database TEST', () => __awaiter(this, void 0, void 0, fun
     yield Room_1.Room.remove({});
     yield ScheduleRoom_1.ScheduleRoom.remove({});
     yield Student_1.Student.remove({});
+    yield Course_1.Course.remove({});
+    yield Class_1.Class.remove({});
 }));
