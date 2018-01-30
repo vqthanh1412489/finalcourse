@@ -10,8 +10,8 @@ classRouter.use(json());
 classRouter.use(adminMiddleWare);
 
 classRouter.post('/', (req, res) => {
-    const { name, idCourse, idTeacher, idScheduleRoom, level } = req.body;
-    ClassService.addClass(name, idCourse, idTeacher, idScheduleRoom, level)
+    const { name, idCourse, idRoom, idTeacher, level, startTime, endTime, dayOfWeek } = req.body;
+    ClassService.addClass(name, idCourse, idRoom, idTeacher, level, startTime, endTime, dayOfWeek)
     .then(data => res.send({ success: true, data }))
     .catch(err => res.status(404).send({ success: false, message: 'Add Class Fail' }));
 });

@@ -10,10 +10,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Class_1 = require("../Class");
 const Course_1 = require("../Course");
+const Room_1 = require("../Room");
 const ScheduleRoom_1 = require("../ScheduleRoom");
+const ScheduleTeacher_1 = require("../ScheduleTeacher");
 const Teacher_1 = require("../Teacher");
+const scheduleRoom_service_1 = require("./scheduleRoom.service");
+const scheduleTeacher_service_1 = require("./scheduleTeacher.service");
+function checkOverlapDate(s1, e1, s2, e2) {
+    const start1 = s1.getTime();
+    const start2 = s2.getTime();
+    const end1 = e1.getTime();
+    const end2 = e2.getTime();
+    return (start2 >= start1 && start2 <= end1) ||
+        (start1 >= start2 && end1 <= start2);
+}
 class ClassService {
-    static addClass(name, idCourse, idTeacher, idScheduleRoom, level) {
+    static addClass(name, idCourse, idRoom, idTeacher, level, startTime, endTime, dayOfWeek) {
         return __awaiter(this, void 0, void 0, function* () {
             const course = yield Course_1.Course.findById(idCourse);
             if (!course)
@@ -21,11 +33,26 @@ class ClassService {
             const teacher = yield Teacher_1.Teacher.findById(idTeacher);
             if (!teacher)
                 throw new Error('Teacher invalid');
-            const scheduleRoom = yield ScheduleRoom_1.ScheduleRoom.findById(idScheduleRoom);
-            if (!scheduleRoom)
-                throw new Error('Schedule Room invalid');
-            const cl = new Class_1.Class({ name, idCourse, idTeacher, idScheduleRoom, level });
+            const room = yield Room_1.Room.findById(idRoom);
+            if (!room)
+                throw new Error('Room invalid');
+            // Kiem tra trung lich giao vien && room
+            const scheduleTeachers = yield ScheduleTeacher_1.ScheduleTeacher.find({ idTeacher: teacher._id });
+            const scheduleRooms = yield ScheduleRoom_1.ScheduleRoom.find({ idRoom: room._id });
+            scheduleTeachers.forEach(element => {
+                if (checkOverlapDate(new Date(startTime), new Date(endTime), new Date(element.startTime), new Date(element.endTime)))
+                    throw new Error('Teacher busy');
+            });
+            scheduleRooms.forEach(element => {
+                if (element.dayOfWeek === dayOfWeek && checkOverlapDate(startTime, endTime, element.startTime, element.endTime))
+                    throw new Error('Room Busy');
+            });
+            // if (checkBusy(scheduleTeachers, dayOfWeek, startTime, endTime)) throw new Error('Teacher Busy');
+            // if (checkBusy(scheduleRooms, dayOfWeek, startTime, endTime)) throw new Error('Room Busy');
+            const cl = new Class_1.Class({ name, idCourse, idRoom, idTeacher, level, startTime, endTime, dayOfWeek });
             yield cl.save();
+            yield scheduleTeacher_service_1.ScheduleTeacherService.addScheduleTeacher(idTeacher, startTime, endTime, dayOfWeek);
+            yield scheduleRoom_service_1.ScheduleRoomService.addScheduleRoom(dayOfWeek, startTime, endTime, idRoom);
             return cl;
         });
     }

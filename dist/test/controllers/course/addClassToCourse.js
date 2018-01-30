@@ -21,7 +21,7 @@ const course_service_1 = require("../../../src/models/service/course.service");
 const room_service_1 = require("../../../src/models/service/room.service");
 const scheduleRoom_service_1 = require("../../../src/models/service/scheduleRoom.service");
 const teacher_service_1 = require("../../../src/models/teacher.service");
-describe.only('add Class into Course Router', () => {
+describe('add Class into Course Router', () => {
     let tk;
     let idCourse;
     let idTeacher;

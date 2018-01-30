@@ -10,14 +10,15 @@ import { CourseService } from '../../../src/models/service/course.service';
 import { RoomService } from '../../../src/models/service/room.service';
 import { ScheduleRoomService } from '../../../src/models/service/scheduleRoom.service';
 import { TeacherService } from '../../../src/models/teacher.service';
+import { ScheduleTeacher } from '../../../src/models/ScheduleTeacher';
+import { ScheduleTeacherService } from '../../../src/models/service/scheduleTeacher.service';
 
-describe('add Class Router', () => {
+describe.only('add Class Router', () => {
     let tk: any;
     let idCourse: any;
     let idTeacher: any;
     let idRoom: any;
-    let idScheduleRoom: any;
-    beforeEach('Add new a Admin - new a Teacher - new a Course - new Schedule', async () => {
+    beforeEach('Add new a Admin - new a Teacher - new a Course - new a Room', async () => {
         const birthDay = new Date('1995-09-30');
         await AdminService.signUpAdmin('vqt1', '123', 'Thanh1', 'vqt1@gmail.com', '01698310295', '5/22 Le Van Chi', birthDay);
         const data = await AdminService.signInAdmin('vqt1', '123');
@@ -35,6 +36,18 @@ describe('add Class Router', () => {
         const room = await Room.findOne({ name: 'E102' }) as Room;
         idRoom = room._id;
 
+        let startTime1;
+        startTime1 = new Date();
+        let endTime1;
+        endTime1 = new Date();
+
+        startTime1.setUTCHours(18);
+        startTime1.setUTCMinutes(0);
+        endTime1.setUTCHours(19);
+        endTime1.setUTCMinutes(0);
+        await ScheduleTeacherService.addScheduleTeacher(idTeacher, startTime1, endTime1, 7);
+    });
+    xit('KT can add new a Class incase full infor && you are Admin && teacher - room empty', async () => {
         let startTime;
         startTime = new Date();
         let endTime;
@@ -44,22 +57,72 @@ describe('add Class Router', () => {
         startTime.setUTCMinutes(0);
         endTime.setUTCHours(20);
         endTime.setUTCMinutes(30);
-
-        await ScheduleRoomService.addScheduleRoom(4, startTime, endTime, idRoom);
-        const schedule = await ScheduleRoom.findOne({ dayOfWeek: 4, idRoom }) as ScheduleRoom;
-        idScheduleRoom = schedule._id;
-    });
-    it('KT can add new a Class incase full infor && you are Admin', async () => {
         const body = {
-            name: 'FEC357',
+            name: 'FRC333',
             idCourse,
+            idRoom,
             idTeacher,
-            idScheduleRoom,
-            level: 'Basic'
+            level: 'Basic',
+            startTime,
+            endTime,
+            dayOfWeek: 7
         };
         const response = await request(app).post('/class/')
         .send(body)
         .set({ token: tk });
         assert.equal(response.status, 200);
+    });
+
+    xit('KT can add new a Class incase full infor && you are Admin && teacher not busy', async () => {
+        let startTime;
+        startTime = new Date();
+        let endTime;
+        endTime = new Date();
+
+        startTime.setUTCHours(21);
+        startTime.setUTCMinutes(0);
+        endTime.setUTCHours(23);
+        endTime.setUTCMinutes(30);
+
+        const body = {
+            name: 'Thanh123',
+            idCourse,
+            idRoom,
+            idTeacher,
+            level: 'High',
+            startTime,
+            endTime,
+            dayOfWeek: 7
+        };
+        const response = await request(app).post('/class/')
+        .send(body)
+        .set({ token: tk });
+        assert.equal(response.status, 200);
+    });
+    it('KT can add new a Class incase full infor && you are Admin && teacher busy', async () => {
+        let startTime;
+        startTime = new Date();
+        let endTime;
+        endTime = new Date();
+
+        startTime.setUTCHours(15);
+        startTime.setUTCMinutes(0);
+        endTime.setUTCHours(23);
+        endTime.setUTCMinutes(30);
+
+        const body = {
+            name: 'Thanh123',
+            idCourse,
+            idRoom,
+            idTeacher,
+            level: 'High',
+            startTime,
+            endTime,
+            dayOfWeek: 7
+        };
+        const response = await request(app).post('/class/')
+        .send(body)
+        .set({ token: tk });
+        assert.equal(response.status, 404);
     });
 });

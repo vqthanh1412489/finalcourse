@@ -13,6 +13,7 @@ const Class_1 = require("../src/models/Class");
 const Course_1 = require("../src/models/Course");
 const Room_1 = require("../src/models/Room");
 const ScheduleRoom_1 = require("../src/models/ScheduleRoom");
+const ScheduleTeacher_1 = require("../src/models/ScheduleTeacher");
 const Student_1 = require("../src/models/Student");
 const Teacher_1 = require("../src/models/Teacher");
 require("../src/startDatabase");
@@ -24,4 +25,5 @@ beforeEach('Remove all Database TEST', () => __awaiter(this, void 0, void 0, fun
     yield Student_1.Student.remove({});
     yield Course_1.Course.remove({});
     yield Class_1.Class.remove({});
+    yield ScheduleTeacher_1.ScheduleTeacher.remove({});
 }));

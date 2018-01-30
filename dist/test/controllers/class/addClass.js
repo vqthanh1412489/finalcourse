@@ -14,18 +14,16 @@ const app_1 = require("../../../src/app");
 const admin_service_1 = require("../../../src/models/admin.service");
 const Course_1 = require("../../../src/models/Course");
 const Room_1 = require("../../../src/models/Room");
-const ScheduleRoom_1 = require("../../../src/models/ScheduleRoom");
 const course_service_1 = require("../../../src/models/service/course.service");
 const room_service_1 = require("../../../src/models/service/room.service");
-const scheduleRoom_service_1 = require("../../../src/models/service/scheduleRoom.service");
 const teacher_service_1 = require("../../../src/models/teacher.service");
-describe('add Class Router', () => {
+const scheduleTeacher_service_1 = require("../../../src/models/service/scheduleTeacher.service");
+describe.only('add Class Router', () => {
     let tk;
     let idCourse;
     let idTeacher;
     let idRoom;
-    let idScheduleRoom;
-    beforeEach('Add new a Admin - new a Teacher - new a Course - new Schedule', () => __awaiter(this, void 0, void 0, function* () {
+    beforeEach('Add new a Admin - new a Teacher - new a Course - new a Room', () => __awaiter(this, void 0, void 0, function* () {
         const birthDay = new Date('1995-09-30');
         yield admin_service_1.AdminService.signUpAdmin('vqt1', '123', 'Thanh1', 'vqt1@gmail.com', '01698310295', '5/22 Le Van Chi', birthDay);
         const data = yield admin_service_1.AdminService.signInAdmin('vqt1', '123');
@@ -38,6 +36,17 @@ describe('add Class Router', () => {
         yield room_service_1.RoomService.addRoom('E102', 1000);
         const room = yield Room_1.Room.findOne({ name: 'E102' });
         idRoom = room._id;
+        let startTime1;
+        startTime1 = new Date();
+        let endTime1;
+        endTime1 = new Date();
+        startTime1.setUTCHours(18);
+        startTime1.setUTCMinutes(0);
+        endTime1.setUTCHours(19);
+        endTime1.setUTCMinutes(0);
+        yield scheduleTeacher_service_1.ScheduleTeacherService.addScheduleTeacher(idTeacher, startTime1, endTime1, 7);
+    }));
+    xit('KT can add new a Class incase full infor && you are Admin && teacher - room empty', () => __awaiter(this, void 0, void 0, function* () {
         let startTime;
         startTime = new Date();
         let endTime;
@@ -46,21 +55,67 @@ describe('add Class Router', () => {
         startTime.setUTCMinutes(0);
         endTime.setUTCHours(20);
         endTime.setUTCMinutes(30);
-        yield scheduleRoom_service_1.ScheduleRoomService.addScheduleRoom(4, startTime, endTime, idRoom);
-        const schedule = yield ScheduleRoom_1.ScheduleRoom.findOne({ dayOfWeek: 4, idRoom });
-        idScheduleRoom = schedule._id;
-    }));
-    it('KT can add new a Class incase full infor && you are Admin', () => __awaiter(this, void 0, void 0, function* () {
         const body = {
-            name: 'FEC357',
+            name: 'FRC333',
             idCourse,
+            idRoom,
             idTeacher,
-            idScheduleRoom,
-            level: 'Basic'
+            level: 'Basic',
+            startTime,
+            endTime,
+            dayOfWeek: 7
         };
         const response = yield request(app_1.app).post('/class/')
             .send(body)
             .set({ token: tk });
         assert.equal(response.status, 200);
+    }));
+    xit('KT can add new a Class incase full infor && you are Admin && teacher not busy', () => __awaiter(this, void 0, void 0, function* () {
+        let startTime;
+        startTime = new Date();
+        let endTime;
+        endTime = new Date();
+        startTime.setUTCHours(21);
+        startTime.setUTCMinutes(0);
+        endTime.setUTCHours(23);
+        endTime.setUTCMinutes(30);
+        const body = {
+            name: 'Thanh123',
+            idCourse,
+            idRoom,
+            idTeacher,
+            level: 'High',
+            startTime,
+            endTime,
+            dayOfWeek: 7
+        };
+        const response = yield request(app_1.app).post('/class/')
+            .send(body)
+            .set({ token: tk });
+        assert.equal(response.status, 200);
+    }));
+    it('KT can add new a Class incase full infor && you are Admin && teacher busy', () => __awaiter(this, void 0, void 0, function* () {
+        let startTime;
+        startTime = new Date();
+        let endTime;
+        endTime = new Date();
+        startTime.setUTCHours(15);
+        startTime.setUTCMinutes(0);
+        endTime.setUTCHours(23);
+        endTime.setUTCMinutes(30);
+        const body = {
+            name: 'Thanh123',
+            idCourse,
+            idRoom,
+            idTeacher,
+            level: 'High',
+            startTime,
+            endTime,
+            dayOfWeek: 7
+        };
+        const response = yield request(app_1.app).post('/class/')
+            .send(body)
+            .set({ token: tk });
+        assert.equal(response.status, 404);
     }));
 });

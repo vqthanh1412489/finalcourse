@@ -14,7 +14,7 @@ import { StudentService } from '../../../src/models/service/student.service';
 import { Student } from '../../../src/models/Student';
 import { TeacherService } from '../../../src/models/teacher.service';
 
-describe.only('add Class into Course Router', () => {
+describe('add Class into Course Router', () => {
     let tk: any;
     let idCourse: any;
     let idTeacher: any;

@@ -8,8 +8,8 @@ exports.classRouter = express_1.Router();
 exports.classRouter.use(body_parser_1.json());
 exports.classRouter.use(adminMiddleWare_1.adminMiddleWare);
 exports.classRouter.post('/', (req, res) => {
-    const { name, idCourse, idTeacher, idScheduleRoom, level } = req.body;
-    class_service_1.ClassService.addClass(name, idCourse, idTeacher, idScheduleRoom, level)
+    const { name, idCourse, idRoom, idTeacher, level, startTime, endTime, dayOfWeek } = req.body;
+    class_service_1.ClassService.addClass(name, idCourse, idRoom, idTeacher, level, startTime, endTime, dayOfWeek)
         .then(data => res.send({ success: true, data }))
         .catch(err => res.status(404).send({ success: false, message: 'Add Class Fail' }));
 });

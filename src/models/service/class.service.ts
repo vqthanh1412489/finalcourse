@@ -1,25 +1,56 @@
 import { Class } from '../Class';
 import { Course } from '../Course';
+import { Room } from '../Room';
 import { ScheduleRoom } from '../ScheduleRoom';
+import { ScheduleTeacher } from '../ScheduleTeacher';
 import { Student } from '../Student';
 import { Teacher } from '../Teacher';
+import { ScheduleRoomService } from './scheduleRoom.service';
+import { ScheduleTeacherService } from './scheduleTeacher.service';
+
+function checkOverlapDate(s1: Date, e1: Date, s2: Date, e2: Date) {
+    const start1 = s1.getTime();
+    const start2 = s2.getTime();
+    const end1 = e1.getTime();
+    const end2 = e2.getTime();
+    return (start2 >= start1 && start2 <= end1) ||
+        (start1 >= start2 && end1 <= start2);
+}
 
 export class ClassService {
     static async addClass(
         name: string,
         idCourse: string,
+        idRoom: string,
         idTeacher: string,
-        idScheduleRoom: string,
-        level: string
+        level: string,
+        startTime: Date,
+        endTime: Date,
+        dayOfWeek: number
     ) {
         const course = await Course.findById(idCourse);
         if (!course) throw new Error('Course invalid');
         const teacher = await Teacher.findById(idTeacher);
         if (!teacher) throw new Error('Teacher invalid');
-        const scheduleRoom = await ScheduleRoom.findById(idScheduleRoom);
-        if (!scheduleRoom) throw new Error('Schedule Room invalid');
-        const cl = new Class({ name, idCourse, idTeacher, idScheduleRoom, level });
+        const room = await Room.findById(idRoom);
+        if (!room) throw new Error('Room invalid');
+        // Kiem tra trung lich giao vien && room
+        const scheduleTeachers = await ScheduleTeacher.find({ idTeacher: teacher._id }) as [ScheduleTeacher];
+        const scheduleRooms = await ScheduleRoom.find({ idRoom: room._id }) as [ScheduleRoom];
+        scheduleTeachers.forEach(element => {
+            if (checkOverlapDate(new Date(startTime), new Date(endTime), new Date(element.startTime), new Date(element.endTime)))
+                throw new Error('Teacher busy');
+        });
+        scheduleRooms.forEach(element => {
+            if (element.dayOfWeek === dayOfWeek && checkOverlapDate(startTime, endTime, element.startTime, element.endTime))
+                throw new Error('Room Busy');
+        });
+        // if (checkBusy(scheduleTeachers, dayOfWeek, startTime, endTime)) throw new Error('Teacher Busy');
+        // if (checkBusy(scheduleRooms, dayOfWeek, startTime, endTime)) throw new Error('Room Busy');
+        const cl = new Class({ name, idCourse, idRoom, idTeacher, level, startTime, endTime, dayOfWeek });
         await cl.save();
+        await ScheduleTeacherService.addScheduleTeacher(idTeacher, startTime, endTime, dayOfWeek);
+        await ScheduleRoomService.addScheduleRoom(dayOfWeek, startTime, endTime, idRoom);
         return cl;
     }
 

@@ -7,6 +7,7 @@ const class_router_1 = require("./controllers/class.router");
 const course_router_1 = require("./controllers/course.router");
 const room_router_1 = require("./controllers/room.router");
 const scheduleRoom_router_1 = require("./controllers/scheduleRoom.router");
+const scheduleTeacher_router_1 = require("./controllers/scheduleTeacher.router");
 const student_router_1 = require("./controllers/student.router");
 const teacher_router_1 = require("./controllers/teacher.router");
 exports.app = express();
@@ -18,6 +19,7 @@ exports.app.use('/scheduleRoom', scheduleRoom_router_1.scheduleRoomRouter);
 exports.app.use('/student', student_router_1.studentRouter);
 exports.app.use('/course', course_router_1.courseRouter);
 exports.app.use('/class', class_router_1.classRouter);
+exports.app.use('/scheduleTeacher', scheduleTeacher_router_1.scheduleTeacherRouter);
 exports.app.get('/', (req, res) => {
     res.send('Vu Quoc Thanh');
 });
