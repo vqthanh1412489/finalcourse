@@ -82,5 +82,29 @@ class StudentService {
             return studentInfor;
         });
     }
+    static addClassToStudent(idStudent, idClass) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newStudent = yield Student_1.Student.findByIdAndUpdate(idStudent, {
+                $addToSet: {
+                    listClass: idClass
+                }
+            }, { new: true });
+            if (!newStudent)
+                throw new Error('idStudent not found');
+            return newStudent;
+        });
+    }
+    static removeClassToStudent(idStudent, idClass) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newStudent = yield Student_1.Student.findByIdAndUpdate(idStudent, {
+                $pull: {
+                    listClass: idClass
+                }
+            }, { new: true });
+            if (!newStudent)
+                throw new Error('idStudent not found');
+            return newStudent;
+        });
+    }
 }
 exports.StudentService = StudentService;

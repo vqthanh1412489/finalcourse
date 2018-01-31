@@ -15,18 +15,18 @@ const admin_service_1 = require("../../../src/models/admin.service");
 const Class_1 = require("../../../src/models/Class");
 const Course_1 = require("../../../src/models/Course");
 const Room_1 = require("../../../src/models/Room");
+const ScheduleRoom_1 = require("../../../src/models/ScheduleRoom");
+const ScheduleTeacher_1 = require("../../../src/models/ScheduleTeacher");
 const class_service_1 = require("../../../src/models/service/class.service");
 const course_service_1 = require("../../../src/models/service/course.service");
 const room_service_1 = require("../../../src/models/service/room.service");
 const student_service_1 = require("../../../src/models/service/student.service");
 const Student_1 = require("../../../src/models/Student");
 const teacher_service_1 = require("../../../src/models/teacher.service");
-describe('update Class Router', () => {
+describe('delete Class Router', () => {
     let tk;
-    let idCourse1;
-    let idCourse2;
-    let idTeacher1;
-    let idTeacher2;
+    let idCourse;
+    let idTeacher;
     let idRoom;
     let idClass;
     let idStudent;
@@ -36,15 +36,10 @@ describe('update Class Router', () => {
         const data = yield admin_service_1.AdminService.signInAdmin('vqt1', '123');
         tk = data.token;
         const teacher = yield teacher_service_1.TeacherService.signUpTeacher('tea1', '123', 'teacher1', 'tea@gmailcon', '123', 'En', 'GL', 'Agri', '1234', ['Toiec', 'Tofel'], '123');
-        idTeacher1 = teacher._id;
-        const teacher2 = yield teacher_service_1.TeacherService.signUpTeacher('tea2', '123', 'teacher2', 'tea@gmailcon', '123', 'En', 'GL', 'Agri', '1234', ['Toiec', 'Tofel'], '123');
-        idTeacher2 = teacher2._id;
+        idTeacher = teacher._id;
         yield course_service_1.CourseService.addCourse('ENGLISH', 50, new Date('2018-02-01'), new Date('2018-05-06'), 200000, 'detailInfor');
         const course = yield Course_1.Course.findOne({ name: 'ENGLISH' });
-        idCourse1 = course._id;
-        yield course_service_1.CourseService.addCourse('Franch', 50, new Date('2018-02-01'), new Date('2018-05-06'), 200000, 'detailInfor');
-        const course2 = yield Course_1.Course.findOne({ name: 'ENGLISH' });
-        idCourse2 = course2._id;
+        idCourse = course._id;
         yield room_service_1.RoomService.addRoom('E102', 1000);
         const room = yield Room_1.Room.findOne({ name: 'E102' });
         idRoom = room._id;
@@ -56,7 +51,7 @@ describe('update Class Router', () => {
         startTime.setUTCMinutes(0);
         endTime.setUTCHours(23);
         endTime.setUTCMinutes(30);
-        yield class_service_1.ClassService.addClass('FFFC142', idCourse1, idRoom, idTeacher1, 'Bacsicc', startTime, endTime, 2);
+        yield class_service_1.ClassService.addClass('FFFC142', idCourse, idRoom, idTeacher, 'Bacsicc', startTime, endTime, 2);
         const cl = yield Class_1.Class.findOne({ name: 'FFFC142' });
         idClass = cl._id;
         yield student_service_1.StudentService.signUpStudent('student6', '123', 'Student 6', 'std5@gmail.com', 'Hoang dieu 2', '01698310295', 0, 0);
@@ -64,14 +59,34 @@ describe('update Class Router', () => {
         idStudent = student._id;
         yield class_service_1.ClassService.addStudentToClass(idClass, idStudent);
     }));
-    it('KT can update Name_Level Class incase Have idClass && You are Admin', () => __awaiter(this, void 0, void 0, function* () {
-        const body = {
-            name: 'BBG221',
-            level: 'High'
-        };
-        const res = yield request(app_1.app).put(`/class/updateNameLevel/${idClass}`)
-            .send(body)
+    xit('KT can delete Class incase Have idClass && You are Admin', () => __awaiter(this, void 0, void 0, function* () {
+        const res = yield request(app_1.app).delete(`/class/${idClass}`)
             .set({ token: tk });
+        assert.equal(res.status, 200);
+    }));
+    xit('KT canNOT delete Class incase Have idClass && You are NOT Admin', () => __awaiter(this, void 0, void 0, function* () {
+        const res = yield request(app_1.app).delete(`/class/${idClass}`)
+            .set({ token: 'tk' });
+        assert.equal(res.status, 404);
+    }));
+    xit('KT canNOT delete Class incase wrong idClass && You are Admin', () => __awaiter(this, void 0, void 0, function* () {
+        const res = yield request(app_1.app).delete(`/class/lasfnwassf`)
+            .set({ token: tk });
+        assert.equal(res.status, 404);
+    }));
+    it('KT If delete the Class, Schedule Teacher, Schedule Room is removed, Student and course is Updated', () => __awaiter(this, void 0, void 0, function* () {
+        const res = yield request(app_1.app).delete(`/class/${idClass}`)
+            .set({ token: tk });
+        const countScheduleRoom = yield ScheduleRoom_1.ScheduleRoom.count({});
+        const countScheduleTeacher = yield ScheduleTeacher_1.ScheduleTeacher.count({});
+        const course = yield Course_1.Course.findById(idCourse);
+        const countClassInCourse = course.listClass.length;
+        const student = yield Student_1.Student.findById(idStudent);
+        const countClassInStudent = course.listClass.length;
+        assert.equal(countScheduleTeacher, 0);
+        assert.equal(countScheduleRoom, 0);
+        assert.equal(countClassInStudent, 0);
+        assert.equal(countScheduleTeacher, 0);
         assert.equal(res.status, 200);
     }));
 });

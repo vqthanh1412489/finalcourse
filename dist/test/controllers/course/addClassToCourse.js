@@ -15,20 +15,17 @@ const admin_service_1 = require("../../../src/models/admin.service");
 const Class_1 = require("../../../src/models/Class");
 const Course_1 = require("../../../src/models/Course");
 const Room_1 = require("../../../src/models/Room");
-const ScheduleRoom_1 = require("../../../src/models/ScheduleRoom");
 const class_service_1 = require("../../../src/models/service/class.service");
 const course_service_1 = require("../../../src/models/service/course.service");
 const room_service_1 = require("../../../src/models/service/room.service");
-const scheduleRoom_service_1 = require("../../../src/models/service/scheduleRoom.service");
 const teacher_service_1 = require("../../../src/models/teacher.service");
 describe('add Class into Course Router', () => {
     let tk;
     let idCourse;
     let idTeacher;
     let idRoom;
-    let idScheduleRoom;
     let idClass;
-    beforeEach('Add new a Admin - new a Teacher - new a Course - new Schedule - Add Class', () => __awaiter(this, void 0, void 0, function* () {
+    beforeEach('Add new a Admin - new a Teacher - new a Course - new Room - Add Class', () => __awaiter(this, void 0, void 0, function* () {
         const birthDay = new Date('1995-09-30');
         yield admin_service_1.AdminService.signUpAdmin('vqt1', '123', 'Thanh1', 'vqt1@gmail.com', '01698310295', '5/22 Le Van Chi', birthDay);
         const data = yield admin_service_1.AdminService.signInAdmin('vqt1', '123');
@@ -45,18 +42,15 @@ describe('add Class into Course Router', () => {
         startTime = new Date();
         let endTime;
         endTime = new Date();
-        startTime.setUTCHours(18);
+        startTime.setUTCHours(19);
         startTime.setUTCMinutes(0);
-        endTime.setUTCHours(20);
+        endTime.setUTCHours(23);
         endTime.setUTCMinutes(30);
-        yield scheduleRoom_service_1.ScheduleRoomService.addScheduleRoom(4, startTime, endTime, idRoom);
-        const schedule = yield ScheduleRoom_1.ScheduleRoom.findOne({ dayOfWeek: 4, idRoom });
-        idScheduleRoom = schedule._id;
-        yield class_service_1.ClassService.addClass('BBG246', idCourse, idTeacher, idScheduleRoom, 'High');
-        const cl = yield Class_1.Class.findOne({ name: 'BBG246' });
+        yield class_service_1.ClassService.addClass('FFFC5', idCourse, idRoom, idTeacher, 'Bacsicc', startTime, endTime, 2);
+        const cl = yield Class_1.Class.findOne({ name: 'FFFC5' });
         idClass = cl._id;
     }));
-    xit('KT can add Class into Course incase Have idCourse, idClass && you are Admin', () => __awaiter(this, void 0, void 0, function* () {
+    it('KT can add Class into Course incase Have idCourse, idClass && you are Admin', () => __awaiter(this, void 0, void 0, function* () {
         const response = yield request(app_1.app).put(`/course/addClassToCourse/${idCourse}`)
             .send({ idClass })
             .set({ token: tk });
@@ -68,7 +62,7 @@ describe('add Class into Course Router', () => {
             .set({ token: 'sfsfsf' });
         assert.equal(response.status, 404);
     }));
-    it('KT canot add Class into Course incase duplicate idClass', () => __awaiter(this, void 0, void 0, function* () {
+    xit('KT canot add Class into Course incase duplicate idClass', () => __awaiter(this, void 0, void 0, function* () {
         const response = yield request(app_1.app).put(`/course/addClassToCourse/${idCourse}`)
             .send({ idClass })
             .set({ token: tk });

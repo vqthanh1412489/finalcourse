@@ -11,7 +11,8 @@ const StudentSchema = new mongoose_1.Schema({
     iamge: { type: String, trim: true },
     score: { type: Number, required: true },
     level: { type: Number, required: true },
-    authority: { type: Number, required: true }
+    authority: { type: Number, required: true },
+    listClass: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Class' }]
 });
 const StudentMongo = mongoose_1.model('Student', StudentSchema);
 class Student extends StudentMongo {

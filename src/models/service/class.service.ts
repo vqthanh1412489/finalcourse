@@ -5,8 +5,10 @@ import { ScheduleRoom } from '../ScheduleRoom';
 import { ScheduleTeacher } from '../ScheduleTeacher';
 import { Student } from '../Student';
 import { Teacher } from '../Teacher';
+import { CourseService } from './course.service';
 import { ScheduleRoomService } from './scheduleRoom.service';
 import { ScheduleTeacherService } from './scheduleTeacher.service';
+import { StudentService } from './student.service';
 
 function checkOverlapDate(s1: Date, e1: Date, s2: Date, e2: Date) {
     const start1 = s1.getTime();
@@ -38,50 +40,76 @@ export class ClassService {
         const scheduleTeachers = await ScheduleTeacher.find({ idTeacher: teacher._id }) as [ScheduleTeacher];
         const scheduleRooms = await ScheduleRoom.find({ idRoom: room._id }) as [ScheduleRoom];
         scheduleTeachers.forEach(element => {
-            if (checkOverlapDate(new Date(startTime), new Date(endTime), new Date(element.startTime), new Date(element.endTime)))
+            if (element.dayOfWeek === dayOfWeek &&
+                checkOverlapDate(new Date(startTime), new Date(endTime), new Date(element.startTime), new Date(element.endTime)))
                 throw new Error('Teacher busy');
         });
         scheduleRooms.forEach(element => {
-            if (element.dayOfWeek === dayOfWeek && checkOverlapDate(startTime, endTime, element.startTime, element.endTime))
-                throw new Error('Room Busy');
+            if (element.dayOfWeek === dayOfWeek &&
+                checkOverlapDate(new Date(startTime), new Date(endTime), new Date(element.startTime), new Date(element.endTime)))
+                throw new Error('Room busy');
         });
-        // if (checkBusy(scheduleTeachers, dayOfWeek, startTime, endTime)) throw new Error('Teacher Busy');
-        // if (checkBusy(scheduleRooms, dayOfWeek, startTime, endTime)) throw new Error('Room Busy');
         const cl = new Class({ name, idCourse, idRoom, idTeacher, level, startTime, endTime, dayOfWeek });
         await cl.save();
         await ScheduleTeacherService.addScheduleTeacher(idTeacher, startTime, endTime, dayOfWeek);
         await ScheduleRoomService.addScheduleRoom(dayOfWeek, startTime, endTime, idRoom);
+        const classInfor = await Class.findOne({ name }) as Class;
+        await CourseService.addClassToCourse(idCourse, classInfor._id);
         return cl;
     }
 
     static async deleteClass(idClass: string) {
-        // const Class = await Class.findOne({ idClass }) as Class;
-        // if (Class) throw new Error('Class is removing dependence the Schedule Class');
         const classRemoved = await Class.findByIdAndRemove(idClass) as Class;
         if (!classRemoved) throw new Error('idClass not found');
+        await ScheduleTeacher.remove({
+            idTeacher: classRemoved.idTeacher,
+            startTime: classRemoved.startTime,
+            endTime: classRemoved.endTime
+        });
+        await ScheduleRoom.remove({
+            idRoom: classRemoved.idRoom,
+            startTime: classRemoved.startTime,
+            endTime: classRemoved.endTime
+        });
+        await Course.findByIdAndUpdate(classRemoved.idCourse, {
+            $pull: {
+                listClass: idClass
+            }
+        });
+        const students = classRemoved.students;
+        students.forEach(async (idStudent) => {
+            const student = await Student.findById(idStudent) as Student;
+            const listClass = student.listClass;
+            listClass.forEach(element => {
+                if (element.toString() === idClass) {
+                    StudentService.removeClassToStudent(student._id, idClass);
+                }
+            });
+        });
         return classRemoved;
     }
 
-    static async updateClass(
+    static async updateName_Level_Class(
         idClass: string,
         newName: string,
-        newIdCourse: string,
-        newIdTeacher: string,
-        newIdScheduleRoom: string,
         newLevel: string,
     ) {
-        // const scheduleClass = await ScheduleClass.findOne({ idClass }) as ScheduleClass;
-        // if (scheduleClass) throw new Error('Class is updating dependence the Schedule Class');
         const newClass = await Class.findByIdAndUpdate(idClass,
             {
                 name: newName,
-                idCourse: newIdCourse,
-                idTeacher: newIdTeacher,
-                idScheduleRoom: newIdScheduleRoom,
                 level: newLevel,
             }, { new: true }) as Class;
         if (!newClass) throw new Error('idClass not found');
         return newClass;
+    }
+
+    static async updateRoom_Class(idClass: string, idNewRoom: string) {
+        const newClass = await Class.findByIdAndUpdate(idClass,
+            {
+                idRoom: idNewRoom
+            }, { new: true }) as Class;
+        const oldClass = await Class.findById(idClass) as Class;
+        await ScheduleRoomService.updateScheduleRoom()
     }
 
     static async addStudentToClass(idClass: string, idStudent: string) {
@@ -91,6 +119,7 @@ export class ClassService {
             }
         }, { new: true }) as Class;
         if (!newClass) throw new Error('idClass not found');
+        StudentService.addClassToStudent(idStudent, idClass);
         return newClass;
     }
 }

@@ -6,6 +6,7 @@ import { Class } from '../../../src/models/Class';
 import { Course } from '../../../src/models/Course';
 import { Room } from '../../../src/models/Room';
 import { ScheduleRoom } from '../../../src/models/ScheduleRoom';
+import { ScheduleTeacher } from '../../../src/models/ScheduleTeacher';
 import { ClassService } from '../../../src/models/service/class.service';
 import { CourseService } from '../../../src/models/service/course.service';
 import { RoomService } from '../../../src/models/service/room.service';
@@ -14,13 +15,14 @@ import { StudentService } from '../../../src/models/service/student.service';
 import { Student } from '../../../src/models/Student';
 import { TeacherService } from '../../../src/models/teacher.service';
 
-describe('add Class into Course Router', () => {
+describe('delete Class Router', () => {
     let tk: any;
     let idCourse: any;
     let idTeacher: any;
     let idRoom: any;
     let idClass: any;
-    beforeEach('Add new a Admin - new a Teacher - new a Course - new Room - Add Class', async () => {
+    let idStudent: any;
+    beforeEach('Add new a Admin - new a Teacher - new a Course - new Room - Add Class - Add Studen to cLass', async () => {
         const birthDay = new Date('1995-09-30');
         await AdminService.signUpAdmin('vqt1', '123', 'Thanh1', 'vqt1@gmail.com', '01698310295', '5/22 Le Van Chi', birthDay);
         const data = await AdminService.signInAdmin('vqt1', '123');
@@ -47,32 +49,52 @@ describe('add Class into Course Router', () => {
         startTime.setUTCMinutes(0);
         endTime.setUTCHours(23);
         endTime.setUTCMinutes(30);
-        await ClassService.addClass('FFFC5', idCourse, idRoom, idTeacher, 'Bacsicc', startTime, endTime, 2);
-        const cl = await Class.findOne({ name: 'FFFC5' }) as Class;
+        await ClassService.addClass('FFFC142', idCourse, idRoom, idTeacher, 'Bacsicc', startTime, endTime, 2);
+        const cl = await Class.findOne({ name: 'FFFC142' }) as Class;
         idClass = cl._id;
+
+        await StudentService.signUpStudent(
+            'student6', '123',
+            'Student 6', 'std5@gmail.com',
+            'Hoang dieu 2', '01698310295', 0, 0
+        );
+        const student = await Student.findOne({ username: 'student6' }) as Student;
+        idStudent = student._id;
+
+        await ClassService.addStudentToClass(idClass, idStudent);
     });
-    it('KT can add Class into Course incase Have idCourse, idClass && you are Admin', async () => {
-        const response = await request(app).put(`/course/addClassToCourse/${idCourse}`)
-        .send({ idClass })
+    xit('KT can delete Class incase Have idClass && You are Admin', async () => {
+        const res = await request(app).delete(`/class/${idClass}`)
         .set({ token: tk });
-        assert.equal(response.status, 200);
+
+        assert.equal(res.status, 200);
     });
-    xit('KT cannot add Class into Course incase Have idCourse, idClass && you are not Admin', async () => {
-        const response = await request(app).put(`/course/addClassToCourse/${idCourse}`)
-        .send({ idClass })
-        .set({ token: 'sfsfsf' });
-        assert.equal(response.status, 404);
+    xit('KT canNOT delete Class incase Have idClass && You are NOT Admin', async () => {
+        const res = await request(app).delete(`/class/${idClass}`)
+        .set({ token: 'tk' });
+
+        assert.equal(res.status, 404);
     });
-    xit('KT canot add Class into Course incase duplicate idClass', async () => {
-        const response = await request(app).put(`/course/addClassToCourse/${idCourse}`)
-        .send({ idClass })
+    xit('KT canNOT delete Class incase wrong idClass && You are Admin', async () => {
+        const res = await request(app).delete(`/class/lasfnwassf`)
         .set({ token: tk });
-        const response1 = await request(app).put(`/course/addClassToCourse/${idCourse}`)
-        .send({ idClass })
+
+        assert.equal(res.status, 404);
+    });
+    it('KT If delete the Class, Schedule Teacher, Schedule Room is removed, Student and course is Updated', async () => {
+        const res = await request(app).delete(`/class/${idClass}`)
         .set({ token: tk });
-        assert.equal(response.status, 200);
-        assert.equal(response1.status, 200);
-        const course = await Course.findOne({ name: 'ENGLISH' }) as Course;
-        assert.equal(course.listClass.length, 1);
+        const countScheduleRoom = await ScheduleRoom.count({});
+        const countScheduleTeacher = await ScheduleTeacher.count({});
+        const course = await Course.findById(idCourse) as Course;
+        const countClassInCourse = course.listClass.length;
+        const student = await Student.findById(idStudent) as Student;
+        const countClassInStudent = course.listClass.length;
+
+        assert.equal(countScheduleTeacher, 0);
+        assert.equal(countScheduleRoom, 0);
+        assert.equal(countClassInStudent, 0);
+        assert.equal(countScheduleTeacher, 0);
+        assert.equal(res.status, 200);
     });
 });

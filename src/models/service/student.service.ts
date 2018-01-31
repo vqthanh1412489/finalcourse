@@ -68,4 +68,23 @@ export class StudentService {
         delete studentInfor.password;
         return studentInfor;
     }
+
+    static async addClassToStudent(idStudent: string, idClass: string) {
+        const newStudent = await Student.findByIdAndUpdate(idStudent, {
+            $addToSet: {
+                listClass: idClass
+            }
+        }, { new: true }) as Student;
+        if (!newStudent) throw new Error('idStudent not found');
+        return newStudent;
+    }
+    static async removeClassToStudent(idStudent: string, idClass: string) {
+        const newStudent = await Student.findByIdAndUpdate(idStudent, {
+            $pull: {
+                listClass: idClass
+            }
+        }, { new: true }) as Student;
+        if (!newStudent) throw new Error('idStudent not found');
+        return newStudent;
+    }
 }

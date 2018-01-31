@@ -23,10 +23,10 @@ classRouter.delete('/:idClass', (req, res) => {
     .catch(err => res.status(404).send({ success: false, message: 'Delete Class Fail' }));
 });
 
-classRouter.put('/:idClass', (req, res) => {
+classRouter.put('/updateNameLevel/:idClass', (req, res) => {
     const { idClass } = req.params;
-    const { name, idCourse, idTeacher, idScheduleRoom, level } = req.body;
-    ClassService.updateClass(idClass, name, idCourse, idTeacher, idScheduleRoom, level)
+    const { name, level } = req.body;
+    ClassService.updateName_Level_Class(idClass, name, level)
     .then(data => res.send({ success: true, data }))
     .catch(err => res.status(404).send({ success: false, message: 'Update Class Fail' }));
 });

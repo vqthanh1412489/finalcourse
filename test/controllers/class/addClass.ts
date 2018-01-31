@@ -5,15 +5,15 @@ import { AdminService } from '../../../src/models/admin.service';
 import { Course } from '../../../src/models/Course';
 import { Room } from '../../../src/models/Room';
 import { ScheduleRoom } from '../../../src/models/ScheduleRoom';
+import { ScheduleTeacher } from '../../../src/models/ScheduleTeacher';
 import { ClassService } from '../../../src/models/service/class.service';
 import { CourseService } from '../../../src/models/service/course.service';
 import { RoomService } from '../../../src/models/service/room.service';
 import { ScheduleRoomService } from '../../../src/models/service/scheduleRoom.service';
-import { TeacherService } from '../../../src/models/teacher.service';
-import { ScheduleTeacher } from '../../../src/models/ScheduleTeacher';
 import { ScheduleTeacherService } from '../../../src/models/service/scheduleTeacher.service';
+import { TeacherService } from '../../../src/models/teacher.service';
 
-describe.only('add Class Router', () => {
+describe('add Class Router', () => {
     let tk: any;
     let idCourse: any;
     let idTeacher: any;
@@ -36,16 +36,29 @@ describe.only('add Class Router', () => {
         const room = await Room.findOne({ name: 'E102' }) as Room;
         idRoom = room._id;
 
-        let startTime1;
-        startTime1 = new Date();
-        let endTime1;
-        endTime1 = new Date();
+        // Add Schedule Teacher
+        // let startTime1;
+        // startTime1 = new Date();
+        // let endTime1;
+        // endTime1 = new Date();
 
-        startTime1.setUTCHours(18);
-        startTime1.setUTCMinutes(0);
-        endTime1.setUTCHours(19);
-        endTime1.setUTCMinutes(0);
-        await ScheduleTeacherService.addScheduleTeacher(idTeacher, startTime1, endTime1, 7);
+        // startTime1.setUTCHours(18);
+        // startTime1.setUTCMinutes(0);
+        // endTime1.setUTCHours(19);
+        // endTime1.setUTCMinutes(0);
+        // await ScheduleTeacherService.addScheduleTeacher(idTeacher, startTime1, endTime1, 7);
+
+        // Add Schedule Room
+        let startTime2;
+        startTime2 = new Date();
+        let endTime2;
+        endTime2 = new Date();
+
+        startTime2.setUTCHours(18);
+        startTime2.setUTCMinutes(0);
+        endTime2.setUTCHours(19);
+        endTime2.setUTCMinutes(0);
+        await ScheduleRoomService.addScheduleRoom(3, startTime2, endTime2, idRoom);
     });
     xit('KT can add new a Class incase full infor && you are Admin && teacher - room empty', async () => {
         let startTime;
@@ -99,7 +112,7 @@ describe.only('add Class Router', () => {
         .set({ token: tk });
         assert.equal(response.status, 200);
     });
-    it('KT can add new a Class incase full infor && you are Admin && teacher busy', async () => {
+    xit('KT can add new a Class incase full infor && you are Admin && teacher busy', async () => {
         let startTime;
         startTime = new Date();
         let endTime;
@@ -118,11 +131,63 @@ describe.only('add Class Router', () => {
             level: 'High',
             startTime,
             endTime,
-            dayOfWeek: 7
+            dayOfWeek: 3
         };
         const response = await request(app).post('/class/')
         .send(body)
         .set({ token: tk });
         assert.equal(response.status, 404);
+    });
+    xit('KT canNOT add new a Class incase full infor && you are Admin && room busy', async () => {
+        let startTime;
+        startTime = new Date();
+        let endTime;
+        endTime = new Date();
+
+        startTime.setUTCHours(15);
+        startTime.setUTCMinutes(0);
+        endTime.setUTCHours(23);
+        endTime.setUTCMinutes(30);
+
+        const body = {
+            name: 'Thanh123',
+            idCourse,
+            idRoom,
+            idTeacher,
+            level: 'Low',
+            startTime,
+            endTime,
+            dayOfWeek: 3
+        };
+        const response = await request(app).post('/class/')
+        .send(body)
+        .set({ token: tk });
+        assert.equal(response.status, 404);
+    });
+    xit('KT can add new a Class incase full infor && you are Admin && room NOT busy', async () => {
+        let startTime;
+        startTime = new Date();
+        let endTime;
+        endTime = new Date();
+
+        startTime.setUTCHours(19);
+        startTime.setUTCMinutes(0);
+        endTime.setUTCHours(23);
+        endTime.setUTCMinutes(30);
+
+        const body = {
+            name: 'Thanh123',
+            idCourse,
+            idRoom,
+            idTeacher,
+            level: 'Low',
+            startTime,
+            endTime,
+            dayOfWeek: 3
+        };
+        const response = await request(app).post('/class/')
+        .send(body)
+        .set({ token: tk });
+        assert.equal(response.status, 200);
     });
 });

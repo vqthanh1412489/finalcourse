@@ -16,9 +16,9 @@ const Course_1 = require("../../../src/models/Course");
 const Room_1 = require("../../../src/models/Room");
 const course_service_1 = require("../../../src/models/service/course.service");
 const room_service_1 = require("../../../src/models/service/room.service");
+const scheduleRoom_service_1 = require("../../../src/models/service/scheduleRoom.service");
 const teacher_service_1 = require("../../../src/models/teacher.service");
-const scheduleTeacher_service_1 = require("../../../src/models/service/scheduleTeacher.service");
-describe.only('add Class Router', () => {
+describe('add Class Router', () => {
     let tk;
     let idCourse;
     let idTeacher;
@@ -36,15 +36,26 @@ describe.only('add Class Router', () => {
         yield room_service_1.RoomService.addRoom('E102', 1000);
         const room = yield Room_1.Room.findOne({ name: 'E102' });
         idRoom = room._id;
-        let startTime1;
-        startTime1 = new Date();
-        let endTime1;
-        endTime1 = new Date();
-        startTime1.setUTCHours(18);
-        startTime1.setUTCMinutes(0);
-        endTime1.setUTCHours(19);
-        endTime1.setUTCMinutes(0);
-        yield scheduleTeacher_service_1.ScheduleTeacherService.addScheduleTeacher(idTeacher, startTime1, endTime1, 7);
+        // Add Schedule Teacher
+        // let startTime1;
+        // startTime1 = new Date();
+        // let endTime1;
+        // endTime1 = new Date();
+        // startTime1.setUTCHours(18);
+        // startTime1.setUTCMinutes(0);
+        // endTime1.setUTCHours(19);
+        // endTime1.setUTCMinutes(0);
+        // await ScheduleTeacherService.addScheduleTeacher(idTeacher, startTime1, endTime1, 7);
+        // Add Schedule Room
+        let startTime2;
+        startTime2 = new Date();
+        let endTime2;
+        endTime2 = new Date();
+        startTime2.setUTCHours(18);
+        startTime2.setUTCMinutes(0);
+        endTime2.setUTCHours(19);
+        endTime2.setUTCMinutes(0);
+        yield scheduleRoom_service_1.ScheduleRoomService.addScheduleRoom(3, startTime2, endTime2, idRoom);
     }));
     xit('KT can add new a Class incase full infor && you are Admin && teacher - room empty', () => __awaiter(this, void 0, void 0, function* () {
         let startTime;
@@ -94,7 +105,7 @@ describe.only('add Class Router', () => {
             .set({ token: tk });
         assert.equal(response.status, 200);
     }));
-    it('KT can add new a Class incase full infor && you are Admin && teacher busy', () => __awaiter(this, void 0, void 0, function* () {
+    xit('KT can add new a Class incase full infor && you are Admin && teacher busy', () => __awaiter(this, void 0, void 0, function* () {
         let startTime;
         startTime = new Date();
         let endTime;
@@ -111,11 +122,59 @@ describe.only('add Class Router', () => {
             level: 'High',
             startTime,
             endTime,
-            dayOfWeek: 7
+            dayOfWeek: 3
         };
         const response = yield request(app_1.app).post('/class/')
             .send(body)
             .set({ token: tk });
         assert.equal(response.status, 404);
+    }));
+    xit('KT canNOT add new a Class incase full infor && you are Admin && room busy', () => __awaiter(this, void 0, void 0, function* () {
+        let startTime;
+        startTime = new Date();
+        let endTime;
+        endTime = new Date();
+        startTime.setUTCHours(15);
+        startTime.setUTCMinutes(0);
+        endTime.setUTCHours(23);
+        endTime.setUTCMinutes(30);
+        const body = {
+            name: 'Thanh123',
+            idCourse,
+            idRoom,
+            idTeacher,
+            level: 'Low',
+            startTime,
+            endTime,
+            dayOfWeek: 3
+        };
+        const response = yield request(app_1.app).post('/class/')
+            .send(body)
+            .set({ token: tk });
+        assert.equal(response.status, 404);
+    }));
+    xit('KT can add new a Class incase full infor && you are Admin && room NOT busy', () => __awaiter(this, void 0, void 0, function* () {
+        let startTime;
+        startTime = new Date();
+        let endTime;
+        endTime = new Date();
+        startTime.setUTCHours(19);
+        startTime.setUTCMinutes(0);
+        endTime.setUTCHours(23);
+        endTime.setUTCMinutes(30);
+        const body = {
+            name: 'Thanh123',
+            idCourse,
+            idRoom,
+            idTeacher,
+            level: 'Low',
+            startTime,
+            endTime,
+            dayOfWeek: 3
+        };
+        const response = yield request(app_1.app).post('/class/')
+            .send(body)
+            .set({ token: tk });
+        assert.equal(response.status, 200);
     }));
 });

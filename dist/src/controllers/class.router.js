@@ -19,10 +19,10 @@ exports.classRouter.delete('/:idClass', (req, res) => {
         .then(data => res.send({ success: true, data }))
         .catch(err => res.status(404).send({ success: false, message: 'Delete Class Fail' }));
 });
-exports.classRouter.put('/:idClass', (req, res) => {
+exports.classRouter.put('/updateNameLevel/:idClass', (req, res) => {
     const { idClass } = req.params;
-    const { name, idCourse, idTeacher, idScheduleRoom, level } = req.body;
-    class_service_1.ClassService.updateClass(idClass, name, idCourse, idTeacher, idScheduleRoom, level)
+    const { name, level } = req.body;
+    class_service_1.ClassService.updateName_Level_Class(idClass, name, level)
         .then(data => res.send({ success: true, data }))
         .catch(err => res.status(404).send({ success: false, message: 'Update Class Fail' }));
 });
