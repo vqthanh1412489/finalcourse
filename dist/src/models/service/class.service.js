@@ -107,11 +107,61 @@ class ClassService {
     }
     static updateRoom_Class(idClass, idNewRoom) {
         return __awaiter(this, void 0, void 0, function* () {
+            const oldClass = yield Class_1.Class.findById(idClass);
+            const { idRoom, dayOfWeek, startTime, endTime } = oldClass;
+            const scheduleRoom = yield ScheduleRoom_1.ScheduleRoom.find({ idRoom: idNewRoom });
+            scheduleRoom.forEach(element => {
+                if (element.dayOfWeek === dayOfWeek &&
+                    checkOverlapDate(new Date(startTime), new Date(endTime), new Date(element.startTime), new Date(element.endTime)))
+                    throw new Error('New Room is busied');
+            });
             const newClass = yield Class_1.Class.findByIdAndUpdate(idClass, {
                 idRoom: idNewRoom
             }, { new: true });
+            if (!newClass)
+                throw new Error('idClass not found');
+            yield ScheduleRoom_1.ScheduleRoom.findOneAndUpdate({ idRoom, dayOfWeek, startTime, endTime }, { idRoom: idNewRoom });
+            return newClass;
+        });
+    }
+    static updateSchedule_Class(idClass, newDayOfWeek, newStartTime, newEndTime) {
+        return __awaiter(this, void 0, void 0, function* () {
             const oldClass = yield Class_1.Class.findById(idClass);
-            yield scheduleRoom_service_1.ScheduleRoomService.updateScheduleRoom();
+            const { idRoom, dayOfWeek, startTime, endTime } = oldClass;
+            const scheduleRoom = yield ScheduleRoom_1.ScheduleRoom.find({ idRoom });
+            scheduleRoom.forEach(element => {
+                if (element.dayOfWeek === newDayOfWeek &&
+                    checkOverlapDate(new Date(element.startTime), new Date(element.endTime), new Date(newStartTime), new Date(newEndTime)))
+                    throw new Error('New Room is busied');
+            });
+            const newClass = yield Class_1.Class.findByIdAndUpdate(idClass, {
+                startTime: newStartTime,
+                endTime: newEndTime,
+                dayOfWeek: newDayOfWeek
+            }, { new: true });
+            if (!newClass)
+                throw new Error('idClass not found');
+            yield ScheduleRoom_1.ScheduleRoom.findOneAndUpdate({ idRoom, dayOfWeek, startTime, endTime }, { dayOfWeek: newDayOfWeek, startTime: newStartTime, endTime: newEndTime });
+            return newClass;
+        });
+    }
+    static updateTeacher_Class(idClass, idNewTeacher) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const oldClass = yield Class_1.Class.findById(idClass);
+            const { idTeacher, dayOfWeek, startTime, endTime } = oldClass;
+            const scheduleTeacher = yield ScheduleTeacher_1.ScheduleTeacher.find({ idTeacher: idNewTeacher });
+            scheduleTeacher.forEach(element => {
+                if (element.dayOfWeek === dayOfWeek &&
+                    checkOverlapDate(new Date(startTime), new Date(endTime), new Date(element.startTime), new Date(element.endTime)))
+                    throw new Error('New Teacher is busied');
+            });
+            const newClass = yield Class_1.Class.findByIdAndUpdate(idClass, {
+                idTeacher: idNewTeacher
+            }, { new: true });
+            if (!newClass)
+                throw new Error('idClass not found');
+            yield ScheduleTeacher_1.ScheduleTeacher.findOneAndUpdate({ idTeacher, dayOfWeek, startTime, endTime }, { idTeacher: idNewTeacher });
+            return newClass;
         });
     }
     static addStudentToClass(idClass, idStudent) {

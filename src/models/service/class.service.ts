@@ -104,14 +104,62 @@ export class ClassService {
     }
 
     static async updateRoom_Class(idClass: string, idNewRoom: string) {
+        const oldClass = await Class.findById(idClass) as Class;
+        const { idRoom, dayOfWeek, startTime, endTime } = oldClass;
+        const scheduleRoom = await ScheduleRoom.find({ idRoom: idNewRoom }) as [ScheduleRoom];
+        scheduleRoom.forEach(element => {
+            if (element.dayOfWeek === dayOfWeek &&
+                checkOverlapDate(new Date(startTime), new Date(endTime), new Date(element.startTime), new Date(element.endTime)))
+                throw new Error('New Room is busied');
+        });
         const newClass = await Class.findByIdAndUpdate(idClass,
             {
                 idRoom: idNewRoom
             }, { new: true }) as Class;
-        const oldClass = await Class.findById(idClass) as Class;
-        await ScheduleRoomService.updateScheduleRoom()
+        if (!newClass) throw new Error('idClass not found');
+        await ScheduleRoom.findOneAndUpdate({idRoom, dayOfWeek, startTime, endTime}, { idRoom: idNewRoom });
+        return newClass;
     }
 
+    static async updateSchedule_Class(idClass: string, newDayOfWeek: number, newStartTime: Date, newEndTime: Date) {
+        const oldClass = await Class.findById(idClass) as Class;
+        const { idRoom, dayOfWeek, startTime, endTime } = oldClass;
+        const scheduleRoom = await ScheduleRoom.find({ idRoom }) as [ScheduleRoom];
+        scheduleRoom.forEach(element => {
+            if (element.dayOfWeek === newDayOfWeek &&
+                checkOverlapDate(new Date(element.startTime), new Date(element.endTime), new Date(newStartTime), new Date(newEndTime)))
+                throw new Error('New Room is busied');
+        });
+        const newClass = await Class.findByIdAndUpdate(idClass,
+            {
+                startTime: newStartTime,
+                endTime: newEndTime,
+                dayOfWeek: newDayOfWeek
+            }, { new: true }) as Class;
+        if (!newClass) throw new Error('idClass not found');
+        await ScheduleRoom.findOneAndUpdate({idRoom, dayOfWeek, startTime, endTime},
+             { dayOfWeek: newDayOfWeek, startTime: newStartTime, endTime: newEndTime });
+        return newClass;
+    }
+
+    static async updateTeacher_Class(idClass: string, idNewTeacher: string) {
+        const oldClass = await Class.findById(idClass) as Class;
+        const { idTeacher, dayOfWeek, startTime, endTime } = oldClass;
+        const scheduleTeacher = await ScheduleTeacher.find({ idTeacher: idNewTeacher }) as [ScheduleTeacher];
+        scheduleTeacher.forEach(element => {
+            if (element.dayOfWeek === dayOfWeek &&
+                checkOverlapDate(new Date(startTime), new Date(endTime), new Date(element.startTime), new Date(element.endTime),))
+                throw new Error('New Teacher is busied');
+        });
+        const newClass = await Class.findByIdAndUpdate(idClass,
+            {
+                idTeacher: idNewTeacher
+            }, { new: true }) as Class;
+        if (!newClass) throw new Error('idClass not found');
+        await ScheduleTeacher.findOneAndUpdate({idTeacher, dayOfWeek, startTime, endTime},
+             { idTeacher: idNewTeacher });
+        return newClass;
+    }
     static async addStudentToClass(idClass: string, idStudent: string) {
         const newClass = await Class.findByIdAndUpdate(idClass, {
             $addToSet: {
