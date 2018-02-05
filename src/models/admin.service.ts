@@ -70,8 +70,9 @@ export class AdminService {
     }
 
     static async getAllAdmin() {
+        console.log('1');
         const admins = await Admin.find({});
-        console.log(admins);
+        console.log('2');
         return admins;
     }
 }

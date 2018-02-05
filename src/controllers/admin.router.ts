@@ -9,6 +9,7 @@ export const adminRouter = Router();
 adminRouter.use(json());
 
 adminRouter.get('/', (req, res) => {
+    console.log('Toi day roi');
     AdminService.getAllAdmin()
     .then(data => res.send({ success: true, data }))
     .catch(err => res.status(404).send({ success: false, message: 'Get Admin Fail' }));

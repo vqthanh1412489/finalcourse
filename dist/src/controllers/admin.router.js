@@ -7,6 +7,7 @@ const adminMiddleWare_1 = require("../models/adminMiddleWare");
 exports.adminRouter = express_1.Router();
 exports.adminRouter.use(body_parser_1.json());
 exports.adminRouter.get('/', (req, res) => {
+    console.log('Toi day roi');
     admin_service_1.AdminService.getAllAdmin()
         .then(data => res.send({ success: true, data }))
         .catch(err => res.status(404).send({ success: false, message: 'Get Admin Fail' }));

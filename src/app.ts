@@ -12,6 +12,7 @@ import { teacherRouter } from './controllers/teacher.router';
 export const app = express();
 
 app.use(cors());
+
 app.use('/admin', adminRouter);
 app.use('/teacher', teacherRouter);
 app.use('/room', roomRouter);

@@ -88,8 +88,9 @@ class AdminService {
     }
     static getAllAdmin() {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('1');
             const admins = yield Admin_1.Admin.find({});
-            console.log(admins);
+            console.log('2');
             return admins;
         });
     }
