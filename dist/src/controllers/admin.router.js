@@ -6,6 +6,11 @@ const admin_service_1 = require("../models/admin.service");
 const adminMiddleWare_1 = require("../models/adminMiddleWare");
 exports.adminRouter = express_1.Router();
 exports.adminRouter.use(body_parser_1.json());
+exports.adminRouter.get('/', (req, res) => {
+    admin_service_1.AdminService.getAllAdmin()
+        .then(data => res.send({ success: true, data }))
+        .catch(err => res.status(404).send({ success: false, message: 'Get Admin Fail' }));
+});
 exports.adminRouter.post('/signup', (req, res) => {
     const { username, password, name, email, phone, address, birthDay } = req.body;
     admin_service_1.AdminService.signUpAdmin(username, password, name, email, phone, address, birthDay)

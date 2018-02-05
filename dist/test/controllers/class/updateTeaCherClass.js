@@ -18,9 +18,9 @@ const Room_1 = require("../../../src/models/Room");
 const class_service_1 = require("../../../src/models/service/class.service");
 const course_service_1 = require("../../../src/models/service/course.service");
 const room_service_1 = require("../../../src/models/service/room.service");
-const teacher_service_1 = require("../../../src/models/teacher.service");
 const scheduleTeacher_service_1 = require("../../../src/models/service/scheduleTeacher.service");
-describe.only('update Teacher Class Router', () => {
+const teacher_service_1 = require("../../../src/models/teacher.service");
+describe('update Teacher Class Router', () => {
     let tk;
     let idCourse1;
     let idTeacher1;

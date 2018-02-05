@@ -20,8 +20,9 @@ class CourseService {
     }
     static deleteCourse(idCourse) {
         return __awaiter(this, void 0, void 0, function* () {
-            // const course = await Course.findOne({ idCourse }) as Course;
-            // if (course) throw new Error('Course is removing dependence the Schedule Course');
+            const course = yield Class_1.Class.findOne({ idCourse });
+            if (course)
+                throw new Error('Course is removing dependence the a Class');
             const courseRemoved = yield Course_1.Course.findByIdAndRemove(idCourse);
             if (!courseRemoved)
                 throw new Error('idCourse not found');
@@ -30,9 +31,10 @@ class CourseService {
     }
     static updateCourse(idCourse, newName, newNumberSession, newStartDate, newEndDate, newTuition, newDetailInfor) {
         return __awaiter(this, void 0, void 0, function* () {
-            // const scheduleCourse = await ScheduleCourse.findOne({ idCourse }) as ScheduleCourse;
-            // if (scheduleCourse) throw new Error('Course is updating dependence the Schedule Course');
-            const course = yield Course_1.Course.findByIdAndUpdate(idCourse, {
+            const course = yield Class_1.Class.findOne({ idCourse });
+            if (course)
+                throw new Error('Course is removing dependence the a Class');
+            const newCourse = yield Course_1.Course.findByIdAndUpdate(idCourse, {
                 name: newName,
                 numberSession: newNumberSession,
                 startDate: newStartDate,
@@ -40,9 +42,9 @@ class CourseService {
                 tuition: newTuition,
                 detailInfor: newDetailInfor
             }, { new: true });
-            if (!course)
+            if (!newCourse)
                 throw new Error('idCourse not found');
-            return course;
+            return newCourse;
         });
     }
     static addClassToCourse(idCourse, idClass) {

@@ -18,7 +18,6 @@ describe('Teacher signin Router', () => {
         .send(body);
 
         const teacher = await Teacher.findOne({ username: 'tea1' }) as Teacher;
-        console.log(teacher);
         assert.equal(res.body.success, true);
         assert.equal(res.status, 200);
     });

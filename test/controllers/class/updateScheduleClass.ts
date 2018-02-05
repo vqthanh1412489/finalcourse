@@ -137,7 +137,7 @@ describe('update Schedule for Class Router', () => {
         endTime = new Date();
 
         startTime.setUTCHours(16);
-        startTime.setUTCMinutes(29);
+        startTime.setUTCMinutes(35);
         endTime.setUTCHours(23);
         endTime.setUTCMinutes(30);
         const body = {

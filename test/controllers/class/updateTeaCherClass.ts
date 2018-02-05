@@ -11,12 +11,12 @@ import { ClassService } from '../../../src/models/service/class.service';
 import { CourseService } from '../../../src/models/service/course.service';
 import { RoomService } from '../../../src/models/service/room.service';
 import { ScheduleRoomService } from '../../../src/models/service/scheduleRoom.service';
+import { ScheduleTeacherService } from '../../../src/models/service/scheduleTeacher.service';
 import { StudentService } from '../../../src/models/service/student.service';
 import { Student } from '../../../src/models/Student';
 import { TeacherService } from '../../../src/models/teacher.service';
-import { ScheduleTeacherService } from '../../../src/models/service/scheduleTeacher.service';
 
-describe.only('update Teacher Class Router', () => {
+describe('update Teacher Class Router', () => {
     let tk: any;
     let idCourse1: any;
     let idTeacher1: any;

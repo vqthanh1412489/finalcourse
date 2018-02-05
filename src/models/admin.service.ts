@@ -68,4 +68,10 @@ export class AdminService {
         delete adminInfor.password;
         return adminInfor;
     }
+
+    static async getAllAdmin() {
+        const admins = await Admin.find({});
+        console.log(admins);
+        return admins;
+    }
 }

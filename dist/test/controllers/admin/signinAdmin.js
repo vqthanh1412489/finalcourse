@@ -26,7 +26,6 @@ describe('Admin signin Router', () => {
         const res = yield request(app_1.app).post('/admin/signin')
             .send(body);
         const admin = yield Admin_1.Admin.findOne({ username: 'vqt1' });
-        console.log(admin);
         assert.equal(res.body.success, true);
         assert.equal(res.status, 200);
     }));

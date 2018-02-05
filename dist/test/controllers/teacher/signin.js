@@ -25,7 +25,6 @@ describe('Teacher signin Router', () => {
         const res = yield request(app_1.app).post('/teacher/signin')
             .send(body);
         const teacher = yield Teacher_1.Teacher.findOne({ username: 'tea1' });
-        console.log(teacher);
         assert.equal(res.body.success, true);
         assert.equal(res.status, 200);
     }));

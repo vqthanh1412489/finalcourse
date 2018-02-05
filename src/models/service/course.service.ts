@@ -16,8 +16,8 @@ export class CourseService {
     }
 
     static async deleteCourse(idCourse: string) {
-        // const course = await Course.findOne({ idCourse }) as Course;
-        // if (course) throw new Error('Course is removing dependence the Schedule Course');
+        const course = await Class.findOne({ idCourse });
+        if (course) throw new Error('Course is removing dependence the a Class');
         const courseRemoved = await Course.findByIdAndRemove(idCourse) as Course;
         if (!courseRemoved) throw new Error('idCourse not found');
         return courseRemoved;
@@ -32,9 +32,9 @@ export class CourseService {
         newTuition: string,
         newDetailInfor: string,
     ) {
-        // const scheduleCourse = await ScheduleCourse.findOne({ idCourse }) as ScheduleCourse;
-        // if (scheduleCourse) throw new Error('Course is updating dependence the Schedule Course');
-        const course = await Course.findByIdAndUpdate(idCourse,
+        const course = await Class.findOne({ idCourse });
+        if (course) throw new Error('Course is removing dependence the a Class');
+        const newCourse = await Course.findByIdAndUpdate(idCourse,
             {
                 name: newName,
                 numberSession: newNumberSession,
@@ -43,8 +43,8 @@ export class CourseService {
                 tuition: newTuition,
                 detailInfor: newDetailInfor
             }, { new: true }) as Course;
-        if (!course) throw new Error('idCourse not found');
-        return course;
+        if (!newCourse) throw new Error('idCourse not found');
+        return newCourse;
     }
 
     static async addClassToCourse(idCourse: string, idClass: string) {

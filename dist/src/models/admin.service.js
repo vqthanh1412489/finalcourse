@@ -86,5 +86,12 @@ class AdminService {
             return adminInfor;
         });
     }
+    static getAllAdmin() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const admins = yield Admin_1.Admin.find({});
+            console.log(admins);
+            return admins;
+        });
+    }
 }
 exports.AdminService = AdminService;

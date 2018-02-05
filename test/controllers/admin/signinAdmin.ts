@@ -18,7 +18,6 @@ describe('Admin signin Router', () => {
         .send(body);
 
         const admin = await Admin.findOne({ username: 'vqt1' }) as Admin;
-        console.log(admin);
         assert.equal(res.body.success, true);
         assert.equal(res.status, 200);
     });
